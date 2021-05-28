@@ -536,15 +536,13 @@ const addTooltip = (
     .append("path")
     .attr("d", symbolGenerator());
 
-  zoombox.on("mousemove", () => {
+  zoombox.on("mousemove", (event) => {
     try {
       var hoverX = xAxis.ax.invert(
-        d3.event.layerX - options.marginLeft ||
-          d3.event.offsetX - options.marginLeft
+        event.layerX - options.marginLeft || event.offsetX - options.marginLeft
       );
       var hoverY = yAxis.ax.invert(
-        d3.event.layerY - options.marginTop ||
-          d3.event.offsetY - options.marginTop
+        event.layerY - options.marginTop || event.offsetY - options.marginTop
       );
 
       var idx = Math.max(
@@ -685,8 +683,8 @@ const addZoom = (
     .attr("x", -options.marginLeft)
     .call(zoomy);
 
-  function normalzoom() {
-    let t = d3.event.transform;
+  function normalzoom(event) {
+    let t = event.transform;
     if (t !== d3.zoomIdentity) {
       xAxis.ax = t.rescaleX(xAxis.ref);
       xAxis.axis.scale(xAxis.ax);
@@ -714,8 +712,8 @@ const addZoom = (
     }
   }
 
-  function normalzoomx() {
-    let t = d3.event.transform;
+  function normalzoomx(event) {
+    let t = event.transform;
     if (t !== d3.zoomIdentity) {
       xAxis.ax = t.rescaleX(xAxis.ref);
       xAxis.axis.scale(xAxis.ax);
@@ -739,8 +737,8 @@ const addZoom = (
     }
   }
 
-  function normalzoomy() {
-    let t = d3.event.transform;
+  function normalzoomy(event) {
+    let t = event.transform;
     if (t !== d3.zoomIdentity) {
       yAxis.ax = t.rescaleY(yAxis.ref);
       yAxis.axis.scale(yAxis.ax);
