@@ -18,7 +18,7 @@ import {
 } from "./functions";
 import { canvasGrid, canvasContour } from "./fillcanvas";
 
-export default heatmap = (div, data, options = {}) => {
+const heatmap = (div, data, options = {}) => {
   if (!Array.isArray(data)) data = [data];
   try {
     d3.select("#svg_" + div).remove();
@@ -108,6 +108,8 @@ export default heatmap = (div, data, options = {}) => {
     console.error(e);
   }
 };
+
+export default heatmap;
 
 const processOptions = (div, data, userOptions) => {
   var defaultOptions = [
