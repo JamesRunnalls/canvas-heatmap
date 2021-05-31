@@ -1,14 +1,38 @@
-import resolve from '@rollup/plugin-node-resolve'; // locate and bundle dependencies in node_modules (mandatory)
-import { terser } from "rollup-plugin-terser"; // code minification (optional)
+import resolve from "@rollup/plugin-node-resolve";
+import commonJs from "@rollup/plugin-commonjs";
+import babel from "@rollup/plugin-babel";
+import { terser } from "rollup-plugin-terser";
+import { name, homepage, version } from "./package.json";
+
+const umdConf = {
+  format: "iife",
+  name: "canvasheatmap",
+  banner: `// Version ${version} ${name} - ${homepage}`,
+};
 
 export default {
-	input: 'src/index.js',
-	output: [
-		{
-			format: 'es',
-			name: 'canvas-heatmap',
-			file: 'dist/canvas-heatmap.min.js'
-		}
-	],
-	plugins: [ resolve(), terser() ]
+  // UMD
+  input: "src/index.js",
+  output: [
+    {
+      ...umdConf,
+      file: `dist/${name}.js`,
+      sourcemap: true,
+    },
+    {
+      // minify
+      ...umdConf,
+      file: `dist/${name}.min.js`,
+      plugins: [
+        terser({
+          output: { comments: "/Version/" },
+        }),
+      ],
+    },
+  ],
+  plugins: [
+    babel({ exclude: "node_modules/**" }),
+    resolve({ browser: true }),
+    commonJs(),
+  ],
 };

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Canvas Heatmap - Basic</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <style type="text/css">
+      body {
+        background-color: #f0f0f0;
+        margin: 0px;
+        overflow: hidden;
+      }
+      .heatmap {
+        height: 500px;
+        width: 500px;
+      }
+      .tooltip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        pointer-events: none;
+        background-color: rgba(255, 255, 255, 0.7);
+        padding: 5px;
+        font-size: 12px;
+      }
+
+      .tooltip:after {
+        content: " ";
+        position: absolute;
+        left: -10px;
+        top: 10px;
+        border-top: 10px solid transparent;
+        border-right: 10px solid rgba(255, 255, 255, 0.7);
+        border-left: none;
+        border-bottom: 10px solid transparent;
+      }
+
+      .tooltip tr {
+        height: 1px;
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="../../dist/canvas-heatmap.min.js"
+    ></script>
+  </head>
+  <body>
+    <div id="heatmap" class="heatmap"></div>
+    <script>
+      var colors = [
+        { color: "#000080", point: 0 },
+        { color: "#3366FF", point: 0.142857142857143 },
+        { color: "#00B0DC", point: 0.285714285714286 },
+        { color: "#009933", point: 0.428571428571429 },
+        { color: "#FFFF5B", point: 0.571428571428571 },
+        { color: "#E63300", point: 0.714285714285714 },
+        { color: "#CC0000", point: 0.857142857142857 },
+        { color: "#800000", point: 1 },
+      ];
+      var n = 20;
+      var m = 20;
+      var z = [];
+      for (var j = 0; j < m; ++j) {
+        let zz = [];
+        for (var i = 0; i < n; ++i) {
+          zz.push(i);
+        }
+        z.push(zz);
+      }
+      var x = [...Array(n).keys()];
+      var y = [...Array(m).keys()];
+
+      var data = { x, y, z };
+      var options = {
+        colors,
+        xLabel: "x-axis",
+        yLabel: "y-axis",
+        zLabel: "z-axis",
+        fontSize: 15,
+      };
+      canvasheatmap.plot("heatmap", data, options);
+    </script>
+  </body>
+</html>

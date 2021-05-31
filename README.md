@@ -2,11 +2,11 @@
 
 [![npm version](https://badge.fury.io/js/canvas-heatmap.svg)](https://badge.fury.io/js/canvas-heatmap)
 
-Visualise large datasets with a responsive heatmap.
+Interactive heatmap, capable of displaying 1,000,000+ data points using canvas and d3.
 
 ![Image of Canvas Heatmap](https://canvas-heatmap.s3.eu-central-1.amazonaws.com/heatmap.png)
 
-Uses [d3](https://d3js.org/)/ for rendering the axis.
+Uses [d3](https://d3js.org/) for rendering the axis.
 
 Check out the examples:
 
@@ -15,34 +15,28 @@ Check out the examples:
 ## Quick start
 
 ```
-import heatmap from 'canvas-heatmap';
-```
-
-or
-
-```
-var heatmap = require('canvas-heatmap');
-```
-
-or even
-
-```
-<script src="//unpkg.com/canvas-heatmap"></script>
+import { plot } from 'canvas-heatmap';
 ```
 
 then
 
 ```
-heatmap(div, data, options={});
+plot(div, data, options={});
+```
+
+or
+
+```
+<script type="text/javascript" src="https://unpkg.com/canvas-heatmap"></script>
+```
+
+then
+
+```
+canvasheatmap.plot(div, data, options={});
 ```
 
 ## API reference
-
-### Initialisation
-
-```
-heatmap(div, data, options={});
-```
 
 ### div
 
