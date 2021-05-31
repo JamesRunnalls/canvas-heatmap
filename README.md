@@ -4,7 +4,7 @@
 
 Interactive heatmap, capable of displaying 1,000,000+ data points using canvas and d3.
 
-![Image of Canvas Heatmap](https://canvas-heatmap.s3.eu-central-1.amazonaws.com/heatmap.png)
+![Image of Canvas Heatmap](https://canvas-heatmap.s3.eu-central-1.amazonaws.com/heatmap.gif)
 
 Uses [d3](https://d3js.org/) for rendering the axis.
 
