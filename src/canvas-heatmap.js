@@ -564,17 +564,17 @@ const addTooltip = (
         xval = formatDate(process.x[xi], "HH:mm dd MMM yy");
       } else {
         xval = formatNumber(process.x[xi]);
-        if (typeof options.xLabel === "string") xu = options.xUnit;
+        if (typeof options.xUnit === "string") xu = options.xUnit;
       }
 
       if (options.yTime) {
         yval = formatDate(process.y[yi], "HH:mm dd MMM yy");
       } else {
         yval = formatNumber(process.y[yi]);
-        if (typeof options.yLabel === "string") yu = options.yUnit;
+        if (typeof options.yUnit === "string") yu = options.yUnit;
       }
 
-      if (typeof options.zLabel === "string") zu = options.zUnit;
+      if (typeof options.zUnit === "string") zu = options.zUnit;
 
       var html =
         "<table><tbody>" +
