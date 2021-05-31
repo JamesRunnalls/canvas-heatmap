@@ -183,12 +183,14 @@ const putImgDataSingleMatrix = (
   var i, j, l, rgbacolor;
   for (j = lowh; j < highh; j++) {
     for (l = loww; l < highw; l++) {
-      rgbacolor = colorScale(arr.z[indexypix[j]][indexxpix[l]]);
-      i = (options.canvasWidth * j + l) * 4;
-      imgData.data[i + 0] = rgbacolor[0];
-      imgData.data[i + 1] = rgbacolor[1];
-      imgData.data[i + 2] = rgbacolor[2];
-      imgData.data[i + 3] = rgbacolor[3];
+      if (indexypix[j] && indexxpix[l]) {
+        rgbacolor = colorScale(arr.z[indexypix[j]][indexxpix[l]]);
+        i = (options.canvasWidth * j + l) * 4;
+        imgData.data[i + 0] = rgbacolor[0];
+        imgData.data[i + 1] = rgbacolor[1];
+        imgData.data[i + 2] = rgbacolor[2];
+        imgData.data[i + 3] = rgbacolor[3];
+      }
     }
   }
   context.putImageData(imgData, 1, 0);
@@ -239,17 +241,19 @@ const putImgDataMultMatrix = (
   for (var i = 0; i < index.length; i++) {
     for (var j = 0; j < index[i].indexypix.length; j++) {
       for (var k = 0; k < index[i].indexxpix.length; k++) {
-        rgbacolor = colorScale(
-          arr[i].z[index[i].indexypix[j][1]][index[i].indexxpix[k][1]]
-        );
-        l =
-          (options.canvasWidth * index[i].indexypix[j][0] +
-            index[i].indexxpix[k][0]) *
-          4;
-        imgData.data[l + 0] = rgbacolor[0];
-        imgData.data[l + 1] = rgbacolor[1];
-        imgData.data[l + 2] = rgbacolor[2];
-        imgData.data[l + 3] = rgbacolor[3];
+        if ((index[i].indexypix[j], index[i].indexxpix[k])) {
+          rgbacolor = colorScale(
+            arr[i].z[index[i].indexypix[j][1]][index[i].indexxpix[k][1]]
+          );
+          l =
+            (options.canvasWidth * index[i].indexypix[j][0] +
+              index[i].indexxpix[k][0]) *
+            4;
+          imgData.data[l + 0] = rgbacolor[0];
+          imgData.data[l + 1] = rgbacolor[1];
+          imgData.data[l + 2] = rgbacolor[2];
+          imgData.data[l + 3] = rgbacolor[3];
+        }
       }
     }
   }

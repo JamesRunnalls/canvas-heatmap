@@ -61,7 +61,15 @@ export const closest = (num, arr) => {
   return curr;
 };
 
+export const isNumeric = (n) => {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+};
+
 export const indexOfClosest = (num, arr) => {
+  if (!isNumeric(num)) {
+    return false;
+  }
+  arr = arr.filter((a) => isNumeric(a));
   var index = 0;
   var diff = Math.abs(num - arr[0]);
   for (var val = 0; val < arr.length; val++) {
