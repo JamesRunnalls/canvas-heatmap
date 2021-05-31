@@ -1,5 +1,16 @@
-import * as d3 from "d3";
-import "d3-contour";
+import {
+  select,
+  extent,
+  scaleTime,
+  scaleLog,
+  scaleLinear,
+  axisBottom,
+  axisLeft,
+  symbol,
+  symbolTriangle,
+  zoomIdentity,
+  zoom as d3zoom,
+} from "d3";
 import {
   verifyString,
   verifyBool,
@@ -21,9 +32,9 @@ import { canvasGrid, canvasContour } from "./fillcanvas";
 export const plot = (div, data, options = {}) => {
   if (!Array.isArray(data)) data = [data];
   try {
-    d3.select("#svg_" + div).remove();
-    d3.select("#canvas_" + div).remove();
-    d3.select("#tooltip_" + div).remove();
+    select("#svg_" + div).remove();
+    select("#canvas_" + div).remove();
+    select("#tooltip_" + div).remove();
   } catch (e) {}
 
   try {
@@ -50,7 +61,7 @@ export const plot = (div, data, options = {}) => {
     if (options.setDownloadGraph)
       options.setDownloadGraph(() => downloadGraph(div, options));
     if (options.setDownloadGraphDiv)
-      d3.select("#" + options.setDownloadGraphDiv).on("click", function () {
+      select("#" + options.setDownloadGraphDiv).on("click", function () {
         downloadGraph(div, options);
       });
 
@@ -149,8 +160,7 @@ const processOptions = (div, data, userOptions) => {
     },
     {
       name: "width",
-      default: d3
-        .select("#" + div)
+      default: select("#" + div)
         .node()
         .getBoundingClientRect().width,
       verify: verifyNumber,
@@ -158,8 +168,7 @@ const processOptions = (div, data, userOptions) => {
     {
       name: "height",
       default:
-        d3
-          .select("#" + div)
+        select("#" + div)
           .node()
           .getBoundingClientRect().height - 5,
       verify: verifyNumber,
@@ -225,8 +234,8 @@ const processOptions = (div, data, userOptions) => {
 const getDomain = (domain) => {
   var minarr = domain.map((d) => d[0]);
   var maxarr = domain.map((d) => d[1]);
-  var min = d3.extent(minarr)[0];
-  var max = d3.extent(maxarr)[1];
+  var min = extent(minarr)[0];
+  var max = extent(maxarr)[1];
   return [min, max];
 };
 
@@ -236,8 +245,8 @@ const dataExtents = (data) => {
   var yFileDomain = [];
   var zFileDomain = [];
   for (var h = 0; h < data.length; h++) {
-    let xext = d3.extent(data[h].x);
-    let yext = d3.extent(data[h].y);
+    let xext = extent(data[h].x);
+    let yext = extent(data[h].y);
     if (
       !xFileDomain.map((x) => x[0]).includes(xext[0]) &&
       !xFileDomain.map((x) => x[1]).includes(xext[1])
@@ -252,7 +261,7 @@ const dataExtents = (data) => {
     }
 
     zFileDomain.push(
-      d3.extent(
+      extent(
         [].concat.apply([], data[h].z).filter((f) => {
           return !isNaN(parseFloat(f)) && isFinite(f);
         })
@@ -266,8 +275,7 @@ const dataExtents = (data) => {
 };
 
 const addSVG = (div, options) => {
-  return d3
-    .select("#" + div)
+  return select("#" + div)
     .append("svg")
     .attr("id", "svg_" + div)
     .attr("width", options.width)
@@ -280,8 +288,7 @@ const addSVG = (div, options) => {
 };
 
 const addCanvas = (div, options) => {
-  const canvas = d3
-    .select("#" + div)
+  const canvas = select("#" + div)
     .append("canvas")
     .attr("width", options.canvasWidth)
     .attr("height", options.canvasHeight)
@@ -307,15 +314,15 @@ const addXAxis = (svg, xDomain, options) => {
   if (options.xReverse) xrange = [options.canvasWidth, 0];
   if (options.xTime) {
     xAxisLabel = "";
-    ax = d3.scaleTime().range(xrange).domain(xDomain);
+    ax = scaleTime().range(xrange).domain(xDomain);
   } else if (options.xLog) {
-    ax = d3.scaleLog().range(xrange).domain(xDomain);
+    ax = scaleLog().range(xrange).domain(xDomain);
   } else {
-    ax = d3.scaleLinear().range(xrange).domain(xDomain);
+    ax = scaleLinear().range(xrange).domain(xDomain);
   }
   var ref = ax.copy();
   var base = ax.copy();
-  var axis = d3.axisBottom(ax).ticks(5);
+  var axis = axisBottom(ax).ticks(5);
 
   var g = svg
     .append("g")
@@ -366,15 +373,15 @@ const addYAxis = (svg, yDomain, options) => {
   if (options.yReverse) yrange = [0, options.canvasHeight];
   if (options.yTime) {
     yAxisLabel = "";
-    ax = d3.scaleTime().range(yrange).domain(yDomain);
+    ax = scaleTime().range(yrange).domain(yDomain);
   } else if (options.yLog) {
-    ax = d3.scaleLog().range(yrange).domain(yDomain);
+    ax = scaleLog().range(yrange).domain(yDomain);
   } else {
-    ax = d3.scaleLinear().range(yrange).domain(yDomain);
+    ax = scaleLinear().range(yrange).domain(yDomain);
   }
   var ref = ax.copy();
   var base = ax.copy();
-  var axis = d3.axisLeft(ax).ticks(5);
+  var axis = axisLeft(ax).ticks(5);
 
   var g = svg
     .append("g")
@@ -510,15 +517,14 @@ const addTooltip = (
   yFileDomain,
   options
 ) => {
-  var tooltip = d3
-    .select("#" + div)
+  var tooltip = select("#" + div)
     .append("div")
     .style("opacity", 0)
     .attr("id", "tooltip_" + div)
     .attr("class", "tooltip");
 
   // Add axis locators
-  var symbolGenerator = d3.symbol().type(d3.symbolTriangle).size(25);
+  var symbolGenerator = symbol().type(symbolTriangle).size(25);
   svg
     .append("g")
     .attr("transform", "rotate(90)")
@@ -588,7 +594,7 @@ const addTooltip = (
         .style("left", xAxis.ax(process.x[xi]) + options.marginLeft + 10 + "px")
         .style("top", yAxis.ax(process.y[yi]) + options.marginTop - 20 + "px")
         .style("opacity", 1);
-      d3.select("#zpointer_" + div)
+      select("#zpointer_" + div)
         .attr(
           "transform",
           "translate(" +
@@ -602,14 +608,14 @@ const addTooltip = (
       if (options.hover) options.hover({ mousex: xi, mousey: yi, idx });
     } catch (e) {
       tooltip.style("opacity", 0);
-      d3.select("#zpointer_" + div).style("opacity", 0);
+      select("#zpointer_" + div).style("opacity", 0);
       if (options.hover) options.hover({ mousex: false, mousey: false });
     }
   });
 
   zoombox.on("mouseout", () => {
     tooltip.style("opacity", 0);
-    d3.select("#zpointer_" + div).style("opacity", 0);
+    select("#zpointer_" + div).style("opacity", 0);
     if (options.hover) options.hover({ mousex: false, mousey: false });
   });
 };
@@ -627,24 +633,21 @@ const addZoom = (
   context,
   options
 ) => {
-  var zoom = d3
-    .zoom()
+  var zoom = d3zoom()
     .extent([
       [0, 0],
       [options.canvasWidth, options.canvasHeight],
     ])
     .on("zoom", normalzoom);
 
-  var zoomx = d3
-    .zoom()
+  var zoomx = d3zoom()
     .extent([
       [0, 0],
       [options.canvasWidth, options.canvasHeight],
     ])
     .on("zoom", normalzoomx);
 
-  var zoomy = d3
-    .zoom()
+  var zoomy = d3zoom()
     .extent([
       [0, 0],
       [options.canvasWidth, options.canvasHeight],
@@ -685,7 +688,7 @@ const addZoom = (
 
   function normalzoom(event) {
     let t = event.transform;
-    if (t !== d3.zoomIdentity) {
+    if (t !== zoomIdentity) {
       xAxis.ax = t.rescaleX(xAxis.ref);
       xAxis.axis.scale(xAxis.ax);
       xAxis.g.call(xAxis.axis);
@@ -708,13 +711,13 @@ const addZoom = (
       }
       xAxis.ref = xAxis.ax;
       yAxis.ref = yAxis.ax;
-      zoombox.call(zoom.transform, d3.zoomIdentity);
+      zoombox.call(zoom.transform, zoomIdentity);
     }
   }
 
   function normalzoomx(event) {
     let t = event.transform;
-    if (t !== d3.zoomIdentity) {
+    if (t !== zoomIdentity) {
       xAxis.ax = t.rescaleX(xAxis.ref);
       xAxis.axis.scale(xAxis.ax);
       xAxis.g.call(xAxis.axis);
@@ -733,13 +736,13 @@ const addZoom = (
         );
       }
       xAxis.ref = xAxis.ax;
-      zoomboxx.call(zoom.transform, d3.zoomIdentity);
+      zoomboxx.call(zoom.transform, zoomIdentity);
     }
   }
 
   function normalzoomy(event) {
     let t = event.transform;
-    if (t !== d3.zoomIdentity) {
+    if (t !== zoomIdentity) {
       yAxis.ax = t.rescaleY(yAxis.ref);
       yAxis.axis.scale(yAxis.ax);
       yAxis.g.call(yAxis.axis);
@@ -758,7 +761,7 @@ const addZoom = (
         );
       }
       yAxis.ref = yAxis.ax;
-      zoomboxy.call(zoom.transform, d3.zoomIdentity);
+      zoomboxy.call(zoom.transform, zoomIdentity);
     }
   }
 
@@ -784,7 +787,7 @@ const addZoom = (
 };
 
 const downloadGraph = (div, options) => {
-  var title = d3.select("#title_" + div);
+  var title = select("#title_" + div);
   title.style("opacity", "1");
   var s = new XMLSerializer();
   var str = s.serializeToString(document.getElementById("svg_" + div));

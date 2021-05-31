@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import { select } from "d3";
 
 export const verifyString = (string) => {
   return typeof string === "string";
@@ -21,7 +21,7 @@ export const verifyFunction = (f) => {
 };
 
 export const verifyDiv = (div) => {
-  if (d3.select("#" + div)._groups[0][0] === null) {
+  if (select("#" + div)._groups[0][0] === null) {
     throw new Error(
       "Div with ID: " + div + " not found, graph could not be added."
     );

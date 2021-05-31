@@ -1,4 +1,5 @@
-import * as d3 from "d3";
+import { range } from "d3";
+import { contours } from "d3-contour";
 import { getRGBAColor, indexOfClosest } from "./functions";
 
 export const canvasGrid = (
@@ -44,22 +45,20 @@ export const canvasContour = (
   const colorScale = (v) => {
     return getRGBAColor(v, options.zMin, options.zMax, options.colors);
   };
-  var thresholds = d3.range(
+  var thresholds = range(
     zDomain[0],
     zDomain[1],
     (zDomain[1] - zDomain[0]) / options.thresholdStep
   );
 
   data.forEach((d) => {
-    let crough = d3.contours().size([d.z[0].length, d.z.length]).smooth(false);
-    let contours = d3.contours().size([d.z[0].length, d.z.length]);
+    let cr = contours().size([d.z[0].length, d.z.length]).smooth(false);
+    let c = contours().size([d.z[0].length, d.z.length]);
     let values = d.z.flat();
-    fill(crough.thresholds(thresholds)(values)[0], d);
-    contours
-      .thresholds(thresholds)(values)
-      .forEach((contour, index) => {
-        if (index !== 0) fill(contour, d);
-      });
+    fill(cr.thresholds(thresholds)(values)[0], d);
+    c.thresholds(thresholds)(values).forEach((contour, index) => {
+      if (index !== 0) fill(contour, d);
+    });
   });
 
   function fill(geometry, plotdata) {
