@@ -29,7 +29,7 @@ import {
 } from "./functions";
 import { canvasGrid, canvasContour } from "./fillcanvas";
 
-export const plot = (div, data, options = {}) => {
+export default heatmap = (div, data, options = {}) => {
   if (!Array.isArray(data)) data = [data];
   try {
     select("#svg_" + div).remove();

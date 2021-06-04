@@ -15,13 +15,13 @@ Check out the examples:
 ## Quick start
 
 ```
-import { plot } from 'canvas-heatmap';
+import heatmap from 'canvas-heatmap';
 ```
 
 then
 
 ```
-plot(div, data, options={});
+heatmap(div, data, options={});
 ```
 
 or
@@ -33,7 +33,7 @@ or
 then
 
 ```
-canvasheatmap.plot(div, data, options={});
+heatmap(div, data, options={});
 ```
 
 ## API reference

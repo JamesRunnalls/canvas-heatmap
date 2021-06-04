@@ -6,7 +6,7 @@ import { name, homepage, version } from "./package.json";
 
 const umdConf = {
   format: "iife",
-  name: "canvasheatmap",
+  name: "heatmap",
   banner: `// Version ${version} ${name} - ${homepage}`,
 };
 

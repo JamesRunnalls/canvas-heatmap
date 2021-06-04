@@ -1,1 +1,1 @@
-export { plot } from "./canvas-heatmap.js";
+export { default } from "./canvas-heatmap.js";
