@@ -9,8 +9,10 @@ import {
   symbol,
   symbolTriangle,
   zoomIdentity,
+  range,
   zoom as d3zoom,
 } from "d3";
+import { contours } from "d3-contour";
 import {
   verifyString,
   verifyBool,
@@ -26,10 +28,11 @@ import {
   closest,
   formatDate,
   formatNumber,
+  isNumeric,
 } from "./functions";
 import { canvasGrid, canvasContour } from "./fillcanvas";
 
-export default heatmap = (div, data, options = {}) => {
+const heatmap = (div, data, options = {}) => {
   if (!Array.isArray(data)) data = [data];
   try {
     select("#svg_" + div).remove();
@@ -66,16 +69,21 @@ export default heatmap = (div, data, options = {}) => {
       });
 
     var contour;
-    if (options.contour && options.autoDownsample) {
-      contour = data.map((d) => autoDownSample(d, options.autoDownsample));
-    } else {
-      contour = data;
+    var nullData;
+    var prepContours;
+    if (options.contour) {
+      contour = options.autoDownsample
+        ? data.map((d) => autoDownSample(d, options.autoDownsample))
+        : data;
+      nullData = replaceNull(contour, options.zMax);
+      prepContours = prepareContours(contour, nullData, zDomain, options);
     }
 
     var { zoombox } = addZoom(
       svg,
       data,
       contour,
+      prepContours,
       div,
       xAxis,
       yAxis,
@@ -102,7 +110,14 @@ export default heatmap = (div, data, options = {}) => {
     setTimeout(() => {
       context.clearRect(0, 0, options.canvasWidth, options.canvasHeight);
       if (options.contour) {
-        canvasContour(contour, xAxis.ax, yAxis.ax, zDomain, context, options);
+        canvasContour(
+          contour,
+          xAxis.ax,
+          yAxis.ax,
+          context,
+          options,
+          prepContours
+        );
       } else {
         canvasGrid(
           data,
@@ -118,6 +133,54 @@ export default heatmap = (div, data, options = {}) => {
   } catch (e) {
     console.error(e);
   }
+};
+
+const prepareContours = (data, nullData, zDomain, options) => {
+  var thresholds = range(
+    zDomain[0],
+    zDomain[1],
+    (zDomain[1] - zDomain[0]) / options.thresholdStep
+  );
+
+  var baseContour = [];
+  var mainContour = [];
+  var nanContour = [];
+
+  for (var i = 0; i < data.length; i++) {
+    let cr = contours()
+      .size([data[i].z[0].length, data[i].z.length])
+      .smooth(false);
+    let c = contours().size([data[i].z[0].length, data[i].z.length]);
+    let values = data[i].z.flat();
+    let nullValues = nullData[i].z.flat();
+    baseContour.push(cr.thresholds(thresholds)(values)[0]);
+    mainContour.push(c.thresholds(thresholds)(values));
+    nanContour.push(cr.thresholds([options.zMax * 10])(nullValues)[0]);
+  }
+  return { baseContour, mainContour, nanContour };
+};
+
+const replaceNull = (data, zMax) => {
+  var nullData = JSON.parse(JSON.stringify(data));
+  for (var i = 0; i < data.length; i++) {
+    for (var y = 1; y < data[i].z.length - 1; y++) {
+      for (var x = 1; x < data[i].z[y].length - 1; x++) {
+        if (data[i].z[y][x] === null || !isNumeric(data[i].z[y][x])) {
+          if (data[i].z[y][x] !== null) data[i].z[y][x] = null;
+          nullData[i].z[y][x] = zMax * 10;
+          nullData[i].z[y][x + 1] = zMax * 10;
+          nullData[i].z[y - 1][x + 1] = zMax * 10;
+          nullData[i].z[y - 1][x] = zMax * 10;
+          nullData[i].z[y - 1][x - 1] = zMax * 10;
+          nullData[i].z[y][x - 1] = zMax * 10;
+          nullData[i].z[y + 1][x - 1] = zMax * 10;
+          nullData[i].z[y + 1][x] = zMax * 10;
+          nullData[i].z[y + 1][x + 1] = zMax * 10;
+        }
+      }
+    }
+  }
+  return nullData;
 };
 
 const processOptions = (div, data, userOptions) => {
@@ -624,6 +687,7 @@ const addZoom = (
   svg,
   data,
   contour,
+  prepContours,
   div,
   xAxis,
   yAxis,
@@ -697,7 +761,14 @@ const addZoom = (
       yAxis.g.call(yAxis.axis);
       context.clearRect(0, 0, options.canvasWidth, options.canvasHeight);
       if (options.contour) {
-        canvasContour(contour, xAxis.ax, yAxis.ax, zDomain, context, options);
+        canvasContour(
+          contour,
+          xAxis.ax,
+          yAxis.ax,
+          context,
+          options,
+          prepContours
+        );
       } else {
         canvasGrid(
           data,
@@ -723,7 +794,14 @@ const addZoom = (
       xAxis.g.call(xAxis.axis);
       context.clearRect(0, 0, options.canvasWidth, options.canvasHeight);
       if (options.contour) {
-        canvasContour(contour, xAxis.ax, yAxis.ax, zDomain, context, options);
+        canvasContour(
+          contour,
+          xAxis.ax,
+          yAxis.ax,
+          context,
+          options,
+          prepContours
+        );
       } else {
         canvasGrid(
           data,
@@ -748,7 +826,14 @@ const addZoom = (
       yAxis.g.call(yAxis.axis);
       context.clearRect(0, 0, options.canvasWidth, options.canvasHeight);
       if (options.contour) {
-        canvasContour(contour, xAxis.ax, yAxis.ax, zDomain, context, options);
+        canvasContour(
+          contour,
+          xAxis.ax,
+          yAxis.ax,
+          context,
+          options,
+          prepContours
+        );
       } else {
         canvasGrid(
           data,
@@ -776,7 +861,14 @@ const addZoom = (
     xAxis.g.call(xAxis.axis);
     context.clearRect(0, 0, options.canvasWidth, options.canvasHeight);
     if (options.contour) {
-      canvasContour(contour, xAxis.ax, yAxis.ax, zDomain, context, options);
+      canvasContour(
+        contour,
+        xAxis.ax,
+        yAxis.ax,
+        context,
+        options,
+        prepContours
+      );
     } else {
       canvasGrid(data, xAxis.ax, yAxis.ax, xDomain, yDomain, context, options);
     }
@@ -841,3 +933,5 @@ const autoDownSample = (arr, ads) => {
     return { x: x_ds, y: y_ds, z: z_ds };
   }
 };
+
+export default heatmap;

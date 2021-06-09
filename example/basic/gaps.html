@@ -42,14 +42,14 @@
         height: 1px;
       }
     </style>
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/canvas-heatmap"
-    ></script>
     <!--<script
       type="text/javascript"
-      src="../../dist/canvas-heatmap.min.js"
+      src="https://unpkg.com/canvas-heatmap"
     ></script>-->
+    <script
+      type="text/javascript"
+      src="../../dist/canvas-heatmap.js"
+    ></script>
   </head>
   <body>
     <div id="heatmap" class="heatmap"></div>
@@ -77,6 +77,15 @@
       var x = [...Array(n).keys()];
       var y = [...Array(m).keys()];
 
+      z[10][10] = NaN;
+      z[11][10] = NaN;
+      z[10][11] = NaN;
+      z[11][11] = NaN;
+      z[12][10] = NaN;
+      z[12][11] = NaN;
+      z[12][12] = NaN;
+      z[12][9] = NaN;
+
       var data = { x, y, z };
       var options = {
         colors,
@@ -84,6 +93,7 @@
         yLabel: "y-axis",
         zLabel: "z-axis",
         fontSize: 15,
+        contour: true,
       };
       heatmap("heatmap", data, options);
     </script>

@@ -1,5 +1,3 @@
-import { range } from "d3";
-import { contours } from "d3-contour";
 import { getRGBAColor, indexOfClosest } from "./functions";
 
 export const canvasGrid = (
@@ -38,31 +36,25 @@ export const canvasContour = (
   data,
   scaleX,
   scaleY,
-  zDomain,
   context,
-  options
+  options,
+  prepContours
 ) => {
   const colorScale = (v) => {
     return getRGBAColor(v, options.zMin, options.zMax, options.colors);
   };
-  var thresholds = range(
-    zDomain[0],
-    zDomain[1],
-    (zDomain[1] - zDomain[0]) / options.thresholdStep
-  );
 
-  data.forEach((d) => {
-    let cr = contours().size([d.z[0].length, d.z.length]).smooth(false);
-    let c = contours().size([d.z[0].length, d.z.length]);
-    let values = d.z.flat();
-    fill(cr.thresholds(thresholds)(values)[0], d);
-    c.thresholds(thresholds)(values).forEach((contour, index) => {
-      if (index !== 0) fill(contour, d);
+  for (var i = 0; i < data.length; i++) {
+    fill(prepContours.baseContour[i], data[i], false);
+    prepContours.mainContour[i].forEach((contour, index) => {
+      if (index !== 0) fill(contour, data[i], false);
     });
-  });
+    fill(prepContours.nanContour[i], data[i], [255, 255, 255]);
+  }
 
-  function fill(geometry, plotdata) {
-    let color = colorScale(geometry.value);
+  function fill(geometry, plotdata, fixedColor) {
+    var color = colorScale(geometry.value);
+    if (fixedColor) color = fixedColor;
     context.fillStyle = `rgb(
       ${color[0]},
       ${color[1]},
