@@ -16,6 +16,8 @@
       .heatmap {
         height: 500px;
         width: 500px;
+        position: relative;
+        display: inline-block;
       }
       .tooltip {
         position: absolute;
@@ -53,6 +55,8 @@
   </head>
   <body>
     <div id="heatmap" class="heatmap"></div>
+    <div id="heatmap2" class="heatmap"></div>
+
     <script>
       var colors = [
         { color: "#000080", point: 0 },
@@ -67,9 +71,9 @@
       var n = 20;
       var m = 20;
       var z = [];
-      for (var j = 0; j < m; ++j) {
+      for (var j = 1; j < m + 1; ++j) {
         let zz = [];
-        for (var i = 0; i < n; ++i) {
+        for (var i = 1; i < n + 1; ++i) {
           zz.push(i);
         }
         z.push(zz);
@@ -80,12 +84,15 @@
       var data = { x, y, z };
       var options = {
         colors,
+        thresholdStep: 19,
         xLabel: "x-axis",
         yLabel: "y-axis",
         zLabel: "z-axis",
         fontSize: 15,
       };
       heatmap("heatmap", data, options);
+      options.contour = true;
+      heatmap("heatmap2", data, options);
     </script>
   </body>
 </html>

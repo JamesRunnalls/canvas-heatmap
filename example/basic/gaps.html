@@ -53,6 +53,7 @@
   </head>
   <body>
     <div id="heatmap" class="heatmap"></div>
+    <div id="heatmap2" class="heatmap"></div>
     <script>
       var colors = [
         { color: "#000080", point: 0 },
@@ -93,9 +94,11 @@
         yLabel: "y-axis",
         zLabel: "z-axis",
         fontSize: 15,
-        contour: true,
+        contour: false,
       };
       heatmap("heatmap", data, options);
+      options.contour = true
+      heatmap("heatmap2", data, options);
     </script>
   </body>
 </html>

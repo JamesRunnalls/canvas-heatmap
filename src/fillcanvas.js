@@ -53,7 +53,7 @@ export const canvasContour = (
   }
 
   function fill(geometry, plotdata, fixedColor) {
-    var color = colorScale(geometry.value);
+    var color = colorScale(geometry.value + prepContours.step);
     if (fixedColor) color = fixedColor;
     context.fillStyle = `rgb(
       ${color[0]},

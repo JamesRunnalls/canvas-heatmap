@@ -141,6 +141,7 @@ const prepareContours = (data, nullData, zDomain, options) => {
     zDomain[1],
     (zDomain[1] - zDomain[0]) / options.thresholdStep
   );
+  var step = (zDomain[1] - zDomain[0]) / options.thresholdStep;
 
   var baseContour = [];
   var mainContour = [];
@@ -157,7 +158,7 @@ const prepareContours = (data, nullData, zDomain, options) => {
     mainContour.push(c.thresholds(thresholds)(values));
     nanContour.push(cr.thresholds([options.zMax * 10])(nullValues)[0]);
   }
-  return { baseContour, mainContour, nanContour };
+  return { baseContour, mainContour, nanContour, step };
 };
 
 const replaceNull = (data, zMax) => {
