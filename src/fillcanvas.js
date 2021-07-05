@@ -1,4 +1,4 @@
-import { getRGBAColor, indexOfClosest } from "./functions";
+import { getRGBAColor, indexOfClosest, isNumeric } from "./functions";
 
 export const canvasGrid = (
   data,
@@ -174,7 +174,7 @@ const putImgDataSingleMatrix = (
   var i, j, l, rgbacolor;
   for (j = lowh; j < highh; j++) {
     for (l = loww; l < highw; l++) {
-      if (indexypix[j] && indexxpix[l]) {
+      if (isNumeric(indexypix[j]) && isNumeric(indexxpix[l])) {
         rgbacolor = colorScale(arr.z[indexypix[j]][indexxpix[l]]);
         i = (options.canvasWidth * j + l) * 4;
         imgData.data[i + 0] = rgbacolor[0];

@@ -352,6 +352,8 @@ const addSVG = (div, options) => {
 };
 
 const addCanvas = (div, options) => {
+  var left = "0px"
+  if (options.contour) left = "1px"
   const canvas = select("#" + div)
     .append("canvas")
     .attr("width", options.canvasWidth)
@@ -361,7 +363,7 @@ const addCanvas = (div, options) => {
     .style("pointer-events", "none")
     .style("z-index", 0)
     .style("position", "absolute")
-    .style("left", "1px")
+    .style("left", left)
     .style("cursor", "grab")
     .attr("id", "canvas_" + div)
     .attr("class", "canvas-plot");
