@@ -49,8 +49,8 @@ const heatmap = (div, data, options = {}) => {
     const { xDomain, yDomain, zDomain, xFileDomain, yFileDomain } =
       dataExtents(data);
 
-    if (!options.zMin) options.zMin = zDomain[0];
-    if (!options.zMax) options.zMax = zDomain[1];
+    if (options.zMin === false) options.zMin = zDomain[0];
+    if (options.zMax === false) options.zMax = zDomain[1];
 
     const svg = addSVG(div, options);
     const context = addCanvas(div, options);
