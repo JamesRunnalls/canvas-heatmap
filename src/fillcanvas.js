@@ -53,29 +53,33 @@ export const canvasContour = (
   }
 
   function fill(geometry, plotdata, fixedColor) {
-    var color = colorScale(geometry.value + prepContours.step);
-    if (fixedColor) color = fixedColor;
-    context.fillStyle = `rgb(
-      ${color[0]},
-      ${color[1]},
-      ${color[2]})`;
-    geometry.coordinates.forEach((a) => {
-      a.forEach((b) => {
-        context.beginPath();
-        context.moveTo(
-          scaleX(getXfromIndex(b[0][0], plotdata, options)),
-          scaleY(getYfromIndex(b[0][1], plotdata, options))
-        );
-        b.forEach((c) => {
-          context.lineTo(
-            scaleX(getXfromIndex(c[0], plotdata, options)),
-            scaleY(getYfromIndex(c[1], plotdata, options))
+    try {
+      var color = colorScale(geometry.value + prepContours.step);
+      if (fixedColor) color = fixedColor;
+      context.fillStyle = `rgb(
+        ${color[0]},
+        ${color[1]},
+        ${color[2]})`;
+      geometry.coordinates.forEach((a) => {
+        a.forEach((b) => {
+          context.beginPath();
+          context.moveTo(
+            scaleX(getXfromIndex(b[0][0], plotdata, options)),
+            scaleY(getYfromIndex(b[0][1], plotdata, options))
           );
+          b.forEach((c) => {
+            context.lineTo(
+              scaleX(getXfromIndex(c[0], plotdata, options)),
+              scaleY(getYfromIndex(c[1], plotdata, options))
+            );
+          });
+          context.closePath();
+          context.fill();
         });
-        context.closePath();
-        context.fill();
       });
-    });
+    } catch (e) {
+      console.error("Failed to plot contour");
+    }
   }
 };
 

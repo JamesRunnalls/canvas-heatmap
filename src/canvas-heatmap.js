@@ -242,7 +242,11 @@ const processOptions = (div, data, userOptions) => {
   var options = {};
   for (let i = 0; i < defaultOptions.length; i++) {
     if (defaultOptions[i].name in userOptions) {
-      if (defaultOptions[i].verify(userOptions[defaultOptions[i].name])) {
+      if (userOptions[defaultOptions[i].name] === undefined) {
+        options[defaultOptions[i].name] = defaultOptions[i].default;
+      } else if (
+        defaultOptions[i].verify(userOptions[defaultOptions[i].name])
+      ) {
         options[defaultOptions[i].name] = userOptions[defaultOptions[i].name];
       } else {
         console.error(
@@ -352,8 +356,8 @@ const addSVG = (div, options) => {
 };
 
 const addCanvas = (div, options) => {
-  var left = "0px"
-  if (options.contour) left = "1px"
+  var left = "0px";
+  if (options.contour) left = "1px";
   const canvas = select("#" + div)
     .append("canvas")
     .attr("width", options.canvasWidth)
