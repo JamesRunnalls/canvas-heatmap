@@ -156,7 +156,7 @@ const prepareContours = (data, nullData, zDomain, options) => {
     let nullValues = nullData[i].z.flat();
     baseContour.push(cr.thresholds(thresholds)(values)[0]);
     mainContour.push(c.thresholds(thresholds)(values));
-    nanContour.push(cr.thresholds([options.zMax * 10])(nullValues)[0]);
+    nanContour.push(cr.thresholds([options.zMax * 1000])(nullValues)[0]);
   }
   return { baseContour, mainContour, nanContour, step };
 };
