@@ -218,7 +218,7 @@ const setLanguage = (name) => {
   if (name in lang) {
     timeFormatDefaultLocale(lang[name]);
   } else {
-    console.error("Language: "+language+" not recognised.")
+    console.error("Language: "+name+" not recognised.")
   }
 };
 
@@ -247,6 +247,7 @@ const replaceNull = (data, zMax) => {
 
 const processOptions = (div, data, userOptions) => {
   var defaultOptions = [
+    { name: "language", default: false, verify: verifyString },
     { name: "xLabel", default: false, verify: verifyString },
     { name: "yLabel", default: false, verify: verifyString },
     { name: "zLabel", default: false, verify: verifyString },
