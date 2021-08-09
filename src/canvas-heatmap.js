@@ -11,6 +11,7 @@ import {
   zoomIdentity,
   range,
   zoom as d3zoom,
+  timeFormatDefaultLocale,
 } from "d3";
 import { contours } from "d3-contour";
 import {
@@ -54,6 +55,8 @@ const heatmap = (div, data, options = {}) => {
 
     const svg = addSVG(div, options);
     const context = addCanvas(div, options);
+
+    if ("language" in options) setLanguage(options.language);
 
     var xAxis = addXAxis(svg, xDomain, options);
     var yAxis = addYAxis(svg, yDomain, options);
@@ -159,6 +162,64 @@ const prepareContours = (data, nullData, zDomain, options) => {
     nanContour.push(cr.thresholds([options.zMax * 1000])(nullValues)[0]);
   }
   return { baseContour, mainContour, nanContour, step };
+};
+
+const setLanguage = (name) => {
+  var lang = {
+    DE: {
+      decimal: ",",
+      thousands: ".",
+      grouping: [3],
+      currency: ["€", ""],
+      dateTime: "%a %b %e %X %Y",
+      date: "%d.%m.%Y",
+      time: "%H:%M:%S",
+      periods: ["AM", "PM"],
+      days: [
+        "Sonntag",
+        "Montag",
+        "Dienstag",
+        "Mittwoch",
+        "Donnerstag",
+        "Freitag",
+        "Samstag",
+      ],
+      shortDays: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+      months: [
+        "Januar",
+        "Februar",
+        "März",
+        "April",
+        "Mai",
+        "Juni",
+        "Juli",
+        "August",
+        "September",
+        "Oktober",
+        "November",
+        "Dezember",
+      ],
+      shortMonths: [
+        "Jan",
+        "Feb",
+        "Mär",
+        "Apr",
+        "Mai",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Okt",
+        "Nov",
+        "Dez",
+      ],
+    },
+  };
+  if (name in lang) {
+    timeFormatDefaultLocale(lang[name]);
+  } else {
+    console.error("Language: "+language+" not recognised.")
+  }
 };
 
 const replaceNull = (data, zMax) => {
