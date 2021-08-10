@@ -30,6 +30,7 @@ import {
   formatDate,
   formatNumber,
   isNumeric,
+  languageOptions,
 } from "./functions";
 import { canvasGrid, canvasContour } from "./fillcanvas";
 
@@ -56,7 +57,7 @@ const heatmap = (div, data, options = {}) => {
     const svg = addSVG(div, options);
     const context = addCanvas(div, options);
 
-    if ("language" in options) setLanguage(options.language);
+    timeFormatDefaultLocale(languageOptions(options.language));
 
     var xAxis = addXAxis(svg, xDomain, options);
     var yAxis = addYAxis(svg, yDomain, options);
@@ -164,208 +165,6 @@ const prepareContours = (data, nullData, zDomain, options) => {
   return { baseContour, mainContour, nanContour, step };
 };
 
-const setLanguage = (name) => {
-  var lang = {
-    DE: {
-      decimal: ",",
-      thousands: ".",
-      grouping: [3],
-      currency: ["€", ""],
-      dateTime: "%a %b %e %X %Y",
-      date: "%d.%m.%Y",
-      time: "%H:%M:%S",
-      periods: ["AM", "PM"],
-      days: [
-        "Sonntag",
-        "Montag",
-        "Dienstag",
-        "Mittwoch",
-        "Donnerstag",
-        "Freitag",
-        "Samstag",
-      ],
-      shortDays: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-      months: [
-        "Januar",
-        "Februar",
-        "März",
-        "April",
-        "Mai",
-        "Juni",
-        "Juli",
-        "August",
-        "September",
-        "Oktober",
-        "November",
-        "Dezember",
-      ],
-      shortMonths: [
-        "Jan",
-        "Feb",
-        "Mär",
-        "Apr",
-        "Mai",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Okt",
-        "Nov",
-        "Dez",
-      ],
-    },
-    EN: {
-      decimal: ",",
-      thousands: ".",
-      grouping: [3],
-      currency: ["€", ""],
-      dateTime: "%a %b %e %X %Y",
-      date: "%d.%m.%Y",
-      time: "%H:%M:%S",
-      periods: ["AM", "PM"],
-      days: [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ],
-      shortDays: ["Sun", "Mon", "Tues", "Weds", "Thurs", "Fri", "Sat"],
-      months: [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ],
-      shortMonths: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
-    },
-    FR: {
-      decimal: ",",
-      thousands: ".",
-      grouping: [3],
-      currency: ["€", ""],
-      dateTime: "%a %b %e %X %Y",
-      date: "%d.%m.%Y",
-      time: "%H:%M:%S",
-      periods: ["AM", "PM"],
-      days: [
-        "Dimanche",
-        "Lundi",
-        "Mardi",
-        "Mercredi",
-        "Jeudi",
-        "Vendredi",
-        "Samedi",
-      ],
-      shortDays: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
-      months: [
-        "Janvier",
-        "Février",
-        "Mars",
-        "Avril",
-        "Mai",
-        "Juin",
-        "Juillet",
-        "Août",
-        "Septembre",
-        "Octobre",
-        "Novembre",
-        "Décembre",
-      ],
-      shortMonths: [
-        "Janv",
-        "Févr",
-        "Mars",
-        "Avr",
-        "Mai",
-        "Juin",
-        "Juil",
-        "Août",
-        "Sept",
-        "Oct",
-        "Nov",
-        "Déc",
-      ],
-    },
-    ES: {
-      decimal: ",",
-      thousands: ".",
-      grouping: [3],
-      currency: ["€", ""],
-      dateTime: "%a %b %e %X %Y",
-      date: "%d.%m.%Y",
-      time: "%H:%M:%S",
-      periods: ["AM", "PM"],
-      days: [
-        "Domingo",
-        "Lunes",
-        "Martes",
-        "Miércoles",
-        "Jueves",
-        "Viernes",
-        "Sábado",
-      ],
-      shortDays: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
-      months: [
-        "Enero",
-        "Febrero",
-        "Marzo",
-        "Abril",
-        "Mayo",
-        "Junio",
-        "Julio",
-        "Agosto",
-        "Septiembre",
-        "Octubre",
-        "Noviembre",
-        "Diciembre",
-      ],
-      shortMonths: [
-        "Enero",
-        "Feb",
-        "Mar",
-        "Abr",
-        "Mayo",
-        "Jun",
-        "Jul",
-        "Agosto",
-        "Sept",
-        "Oct",
-        "Nov",
-        "Dic",
-      ],
-    },
-  };
-  if (name in lang) {
-    timeFormatDefaultLocale(lang[name]);
-  } else {
-    console.error("Language: " + name + " not recognised.");
-  }
-};
-
 const replaceNull = (data, zMax) => {
   var nullData = JSON.parse(JSON.stringify(data));
   for (var i = 0; i < data.length; i++) {
@@ -391,7 +190,7 @@ const replaceNull = (data, zMax) => {
 
 const processOptions = (div, data, userOptions) => {
   var defaultOptions = [
-    { name: "language", default: false, verify: verifyString },
+    { name: "language", default: "EN", verify: verifyString },
     { name: "xLabel", default: false, verify: verifyString },
     { name: "yLabel", default: false, verify: verifyString },
     { name: "zLabel", default: false, verify: verifyString },
@@ -818,6 +617,8 @@ const addTooltip = (
     .append("path")
     .attr("d", symbolGenerator());
 
+  var lang = languageOptions(options.language)
+
   zoombox.on("mousemove", (event) => {
     try {
       var hoverX = xAxis.ax.invert(
@@ -843,14 +644,14 @@ const addTooltip = (
       var zval = process.z[yi][xi];
 
       if (options.xTime) {
-        xval = formatDate(process.x[xi], "HH:mm dd MMM yy");
+        xval = formatDate(process.x[xi], lang);
       } else {
         xval = formatNumber(process.x[xi]);
         if (typeof options.xUnit === "string") xu = options.xUnit;
       }
 
       if (options.yTime) {
-        yval = formatDate(process.y[yi], "HH:mm dd MMM yy");
+        yval = formatDate(process.y[yi], lang);
       } else {
         yval = formatNumber(process.y[yi]);
         if (typeof options.yUnit === "string") yu = options.yUnit;

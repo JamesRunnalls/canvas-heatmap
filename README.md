@@ -86,7 +86,7 @@ Data can be an object {x: [], y:[], z:[[]]} or and array of objects [{},{}].
 | width               | Width of the graph                                    | div width   | Number   |
 | height              | Height of the graph                                   | div height  | Number   |
 | colors              | Color range for the plot (see below for example)      | Red -> Blue | Array    |
-| language            | Select language for time axis. EN, DE, FR, ES         | EN          | String   |
+| language            | Select language for time axis. en, de, fr, es         | en          | String   |
 
 #### Colors
 
