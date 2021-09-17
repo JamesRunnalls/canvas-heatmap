@@ -190,7 +190,7 @@ const replaceNull = (data, zMax) => {
 
 const processOptions = (div, data, userOptions) => {
   var defaultOptions = [
-    { name: "language", default: "EN", verify: verifyString },
+    { name: "language", default: "en", verify: verifyString },
     { name: "xLabel", default: false, verify: verifyString },
     { name: "yLabel", default: false, verify: verifyString },
     { name: "zLabel", default: false, verify: verifyString },
