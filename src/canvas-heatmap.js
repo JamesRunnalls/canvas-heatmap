@@ -54,8 +54,8 @@ const heatmap = (div, data, options = {}) => {
     if (options.zMin === false) options.zMin = zDomain[0];
     if (options.zMax === false) options.zMax = zDomain[1];
 
-    const svg = addSVG(div, options);
     const context = addCanvas(div, options);
+    const svg = addSVG(div, options);
 
     timeFormatDefaultLocale(languageOptions(options.language));
 
@@ -370,7 +370,7 @@ const addCanvas = (div, options) => {
     .style("margin-left", options.marginLeft + "px")
     .style("margin-top", options.marginTop + "px")
     .style("pointer-events", "none")
-    .style("z-index", 0)
+    .style("z-index", -1)
     .style("position", "absolute")
     .style("left", left)
     .style("cursor", "grab")
@@ -617,7 +617,20 @@ const addTooltip = (
     .append("path")
     .attr("d", symbolGenerator());
 
-  var lang = languageOptions(options.language)
+  // Add vertical point identifier
+  var vpi = svg
+    .append("g")
+    .style("opacity", 0)
+    .attr("id", "xline_" + div);
+  vpi
+    .append("line")
+    .attr("y1", 0)
+    .attr("y2", options.canvasHeight)
+    .style("stroke-width", 1)
+    .style("stroke", "black")
+    .style("fill", "none");
+
+  var lang = languageOptions(options.language);
 
   zoombox.on("mousemove", (event) => {
     try {
@@ -642,6 +655,8 @@ const addTooltip = (
       var yu = "";
       var zu = "";
       var zval = process.z[yi][xi];
+
+      console.log(process.y);
 
       if (options.xTime) {
         xval = formatDate(process.x[xi], lang);
@@ -671,6 +686,7 @@ const addTooltip = (
         .style("left", xAxis.ax(process.x[xi]) + options.marginLeft + 10 + "px")
         .style("top", yAxis.ax(process.y[yi]) + options.marginTop - 20 + "px")
         .style("opacity", 1);
+
       select("#zpointer_" + div)
         .attr(
           "transform",
@@ -683,6 +699,29 @@ const addTooltip = (
         )
         .style("opacity", 1);
       if (options.hover) options.hover({ mousex: xi, mousey: yi, idx });
+
+      // Add vertical point identifier
+      vpi.selectAll("circle").remove();
+      for (var yp of process.y) {
+        console.log(yAxis.ax(yp), 0 >= yAxis.ax(yp) <= options.canvasHeight)
+        if (0 >= yAxis.ax(yp) <= options.canvasHeight) {
+          vpi
+            .append("circle")
+            .attr("cy", yAxis.ax(yp))
+            .attr("r", 2)
+            .style("fill", "black");
+        }
+      }
+      vpi
+        .attr(
+          "transform",
+          "translate(" +
+            xAxis.ax(process.x[xi]) +
+            options.marginLeft +
+            10 +
+            ",0)"
+        )
+        .style("opacity", 1);
     } catch (e) {
       tooltip.style("opacity", 0);
       select("#zpointer_" + div).style("opacity", 0);
@@ -691,8 +730,9 @@ const addTooltip = (
   });
 
   zoombox.on("mouseout", () => {
-    tooltip.style("opacity", 0);
-    select("#zpointer_" + div).style("opacity", 0);
+    vpi.style("opacity", 1);
+    tooltip.style("opacity", 1);
+    select("#zpointer_" + div).style("opacity", 1);
     if (options.hover) options.hover({ mousex: false, mousey: false });
   });
 };
