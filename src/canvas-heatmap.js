@@ -606,6 +606,7 @@ const addTooltip = (
     .append("div")
     .style("opacity", 0)
     .style("z-index", 2)
+    .style("pointer-events", "none")
     .attr("id", "tooltip_" + div)
     .attr("class", "tooltip");
 
@@ -633,6 +634,7 @@ const addTooltip = (
   var vpi = svg
     .append("g")
     .style("opacity", 0)
+    .style("pointer-events", "none")
     .attr("id", "xline_" + div);
   if (options.levels)
     vpi
