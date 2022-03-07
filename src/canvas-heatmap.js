@@ -63,7 +63,7 @@ const heatmap = (div, data, options = {}) => {
     var yAxis = addYAxis(svg, yDomain, options);
 
     if (options.addTitle) addTitle(svg, div, options);
-    if (options.backgroundColor) addBackground(svg, options);
+    if (options.backgroundColor) addBackground(div, options);
     if (options.legendRight) addLegendRight(svg, options);
     if (options.setDownloadGraph)
       options.setDownloadGraph(() => downloadGraph(div, options));
@@ -353,7 +353,7 @@ const addSVG = (div, options) => {
     .append("svg")
     .attr("id", "svg_" + div)
     .attr("width", options.width)
-    .style("z-index", 1)
+    .style("z-index", 2)
     .style("position", "absolute")
     .attr("height", options.height)
     .append("g")
@@ -373,7 +373,7 @@ const addCanvas = (div, options) => {
     .style("margin-left", options.marginLeft + "px")
     .style("margin-top", options.marginTop + "px")
     .style("pointer-events", "none")
-    .style("z-index", 0)
+    .style("z-index", 1)
     .style("position", "absolute")
     .style("left", left)
     .style("cursor", "grab")
@@ -495,12 +495,19 @@ const addTitle = (svg, div, options) => {
     .text(options.title);
 };
 
-const addBackground = (svg, options) => {
-  svg
+const addBackground = (div, options) => {
+  select("#" + div)
+    .append("svg")
+    .attr("id", "background_" + div)
+    .attr("width", options.width)
+    .style("z-index", 0)
+    .style("position", "absolute")
+    .attr("height", options.height)
+    .append("g")
     .append("rect")
     .attr("x", 1)
-    .attr("width", options.canvasWidth)
-    .attr("height", options.canvasHeight)
+    .attr("width", options.width)
+    .attr("height", options.height)
     .attr("fill", options.backgroundColor);
 };
 
@@ -598,8 +605,10 @@ const addTooltip = (
   var tooltip = select("#" + div)
     .append("div")
     .style("opacity", 0)
+    .style("z-index", 2)
     .attr("id", "tooltip_" + div)
     .attr("class", "tooltip");
+
 
   // Add axis locators
   var symbolGenerator = symbol().type(symbolTriangle).size(25);
