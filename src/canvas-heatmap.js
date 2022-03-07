@@ -200,6 +200,7 @@ const processOptions = (div, data, userOptions) => {
     { name: "xLog", default: false, verify: verifyBool },
     { name: "yLog", default: false, verify: verifyBool },
     { name: "tooltip", default: true, verify: verifyBool },
+    { name: "levels", default: false, verify: verifyBool },
     { name: "title", default: false, verify: verifyString },
     { name: "zMin", default: false, verify: verifyNumber },
     { name: "zMax", default: false, verify: verifyNumber },
@@ -622,13 +623,14 @@ const addTooltip = (
     .append("g")
     .style("opacity", 0)
     .attr("id", "xline_" + div);
-  vpi
-    .append("line")
-    .attr("y1", 0)
-    .attr("y2", options.canvasHeight)
-    .style("stroke-width", 1)
-    .style("stroke", "black")
-    .style("fill", "none");
+  if (options.levels)
+    vpi
+      .append("line")
+      .attr("y1", 0)
+      .attr("y2", options.canvasHeight)
+      .style("stroke-width", 1)
+      .style("stroke", "white")
+      .style("fill", "none");
 
   var lang = languageOptions(options.language);
 
@@ -655,8 +657,6 @@ const addTooltip = (
       var yu = "";
       var zu = "";
       var zval = process.z[yi][xi];
-
-      console.log(process.y);
 
       if (options.xTime) {
         xval = formatDate(process.x[xi], lang);
@@ -701,28 +701,30 @@ const addTooltip = (
       if (options.hover) options.hover({ mousex: xi, mousey: yi, idx });
 
       // Add vertical point identifier
-      vpi.selectAll("circle").remove();
-      for (var yp of process.y) {
-        console.log(yAxis.ax(yp), 0 >= yAxis.ax(yp) <= options.canvasHeight)
-        if (0 >= yAxis.ax(yp) <= options.canvasHeight) {
-          vpi
-            .append("circle")
-            .attr("cy", yAxis.ax(yp))
-            .attr("r", 2)
-            .style("fill", "black");
+      if (options.levels) {
+        vpi.selectAll("circle").remove();
+        for (var yp of process.y) {
+          if (yAxis.ax(yp) >= 0 && yAxis.ax(yp) <= options.canvasHeight) {
+            vpi
+              .append("circle")
+              .attr("cy", yAxis.ax(yp))
+              .attr("r", 2)
+              .style("fill", "white");
+          }
         }
+        vpi
+          .attr(
+            "transform",
+            "translate(" +
+              xAxis.ax(process.x[xi]) +
+              options.marginLeft +
+              10 +
+              ",0)"
+          )
+          .style("opacity", 0.7);
       }
-      vpi
-        .attr(
-          "transform",
-          "translate(" +
-            xAxis.ax(process.x[xi]) +
-            options.marginLeft +
-            10 +
-            ",0)"
-        )
-        .style("opacity", 1);
     } catch (e) {
+      vpi.style("opacity", 0);
       tooltip.style("opacity", 0);
       select("#zpointer_" + div).style("opacity", 0);
       if (options.hover) options.hover({ mousex: false, mousey: false });
@@ -730,7 +732,7 @@ const addTooltip = (
   });
 
   zoombox.on("mouseout", () => {
-    vpi.style("opacity", 1);
+    vpi.style("opacity", 0);
     tooltip.style("opacity", 1);
     select("#zpointer_" + div).style("opacity", 1);
     if (options.hover) options.hover({ mousex: false, mousey: false });
