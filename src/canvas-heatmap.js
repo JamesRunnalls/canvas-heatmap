@@ -353,6 +353,8 @@ const addSVG = (div, options) => {
     .append("svg")
     .attr("id", "svg_" + div)
     .attr("width", options.width)
+    .style("z-index", 1)
+    .style("position", "absolute")
     .attr("height", options.height)
     .append("g")
     .attr(
@@ -371,7 +373,7 @@ const addCanvas = (div, options) => {
     .style("margin-left", options.marginLeft + "px")
     .style("margin-top", options.marginTop + "px")
     .style("pointer-events", "none")
-    .style("z-index", -1)
+    .style("z-index", 0)
     .style("position", "absolute")
     .style("left", left)
     .style("cursor", "grab")
