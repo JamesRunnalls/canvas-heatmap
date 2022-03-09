@@ -746,8 +746,8 @@ const addTooltip = (
 
   zoombox.on("mouseout", () => {
     vpi.style("opacity", 0);
-    tooltip.style("opacity", 1);
-    select("#zpointer_" + div).style("opacity", 1);
+    tooltip.style("opacity", 0);
+    select("#zpointer_" + div).style("opacity", 0);
     if (options.hover) options.hover({ mousex: false, mousey: false });
   });
 };
