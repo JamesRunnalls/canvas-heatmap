@@ -1,6 +1,7 @@
 import { select } from "d3";
 
 export const verifyString = (string) => {
+  if (string === false) return true;
   return typeof string === "string";
 };
 
