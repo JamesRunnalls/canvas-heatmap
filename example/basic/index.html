@@ -56,6 +56,7 @@
   <body>
     <div id="heatmap" class="heatmap"></div>
     <div id="heatmap2" class="heatmap"></div>
+    <div id="heatmap3" class="heatmap"></div>
 
     <script>
       var colors = [
@@ -71,11 +72,13 @@
       var n = 20;
       var m = 20;
       var z = [];
+      var t = [];
       for (var j = 1; j < m + 1; ++j) {
         let zz = [];
         for (var i = 1; i < n + 1; ++i) {
           zz.push(i);
         }
+        t.push(new Date(2022, 1, j));
         z.push(zz);
       }
       var x = [...Array(n).keys()];
@@ -94,6 +97,8 @@
       heatmap("heatmap", data, options);
       options.contour = true;
       heatmap("heatmap2", data, options);
+      options.language = "de"
+      heatmap("heatmap3", { x: t, y, z }, options);
     </script>
   </body>
 </html>

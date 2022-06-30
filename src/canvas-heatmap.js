@@ -6,6 +6,14 @@ import {
   scaleLinear,
   axisBottom,
   axisLeft,
+  timeFormat,
+  timeSecond,
+  timeMinute,
+  timeHour,
+  timeDay,
+  timeMonth,
+  timeYear,
+  timeWeek,
   symbol,
   symbolTriangle,
   zoomIdentity,
@@ -402,6 +410,9 @@ const addXAxis = (svg, xDomain, options) => {
   var ref = ax.copy();
   var base = ax.copy();
   var axis = axisBottom(ax).ticks(5);
+  if (options.xTime) {
+    axis.tickFormat(multiFormat);
+  }
 
   var g = svg
     .append("g")
@@ -460,7 +471,10 @@ const addYAxis = (svg, yDomain, options) => {
   }
   var ref = ax.copy();
   var base = ax.copy();
-  var axis = axisLeft(ax).ticks(5);
+  var axis = axisLeft(ax).ticks(3);
+  if (options.yTime) {
+    axis.tickFormat(multiFormat);
+  }
 
   var g = svg
     .append("g")
@@ -611,7 +625,6 @@ const addTooltip = (
     .attr("id", "tooltip_" + div)
     .attr("class", "tooltip");
 
-
   // Add axis locators
   var symbolGenerator = symbol().type(symbolTriangle).size(25);
   svg
@@ -692,7 +705,10 @@ const addTooltip = (
         "<table><tbody>" +
         `<tr><td>x:</td><td>${xval} ${xu}</td></tr>` +
         `<tr><td>y:</td><td>${yval} ${yu}</td></tr>` +
-        `<tr><td>z:</td><td>${formatNumber(zval, options.decimalPlaces)} ${zu}</td></tr>` +
+        `<tr><td>z:</td><td>${formatNumber(
+          zval,
+          options.decimalPlaces
+        )} ${zu}</td></tr>` +
         "</tbody></table>";
 
       tooltip
@@ -1002,6 +1018,34 @@ const autoDownSample = (arr, ads) => {
     }
     return { x: x_ds, y: y_ds, z: z_ds };
   }
+};
+
+const multiFormat = (date) => {
+  var formatMillisecond = timeFormat(".%L"),
+    formatSecond = timeFormat(":%S"),
+    formatMinute = timeFormat("%H:%M"),
+    formatHour = timeFormat("%H:%M"),
+    formatDay = timeFormat("%a %d"),
+    formatWeek = timeFormat("%b %d"),
+    formatMonth = timeFormat("%B"),
+    formatYear = timeFormat("%Y");
+  return (
+    timeSecond(date) < date
+      ? formatMillisecond
+      : timeMinute(date) < date
+      ? formatSecond
+      : timeHour(date) < date
+      ? formatMinute
+      : timeDay(date) < date
+      ? formatHour
+      : timeMonth(date) < date
+      ? timeWeek(date) < date
+        ? formatDay
+        : formatWeek
+      : timeYear(date) < date
+      ? formatMonth
+      : formatYear
+  )(date);
 };
 
 export default heatmap;
