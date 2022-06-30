@@ -105,9 +105,9 @@ export const formatDate = (a, lang) => {
 
 export const formatNumber = (num, decimals = 3) => {
   num = parseFloat(num);
-  var fact = Math.round(parseFloat(decimals)) * 10
+  var fact = 10 ** Math.round(parseFloat(decimals))
   if (num > 9999 || (num < 0.01 && num > -0.01) || num < -9999) {
-    num = num.toExponential(3);
+    num = num.toExponential(decimals);
   } else {
     num = Math.round(num * fact) / fact;
   }
