@@ -103,12 +103,13 @@ export const formatDate = (a, lang) => {
   } ${date} ${month} ${String(year).slice(-2)}`;
 };
 
-export const formatNumber = (num) => {
+export const formatNumber = (num, decimals = 3) => {
   num = parseFloat(num);
+  var fact = Math.round(parseFloat(decimals)) * 10
   if (num > 9999 || (num < 0.01 && num > -0.01) || num < -9999) {
     num = num.toExponential(3);
   } else {
-    num = Math.round(num * 10000) / 10000;
+    num = Math.round(num * fact) / fact;
   }
   return num;
 };
@@ -123,7 +124,7 @@ export const languageOptions = (name) => {
       dateTime: "%a %b %e %X %Y",
       date: "%d.%m.%Y",
       time: "%H:%M:%S",
-      periods: ["AM", "PM"],
+      periods: ['Vormittag', 'Nachmittag'],
       days: [
         "Sonntag",
         "Montag",

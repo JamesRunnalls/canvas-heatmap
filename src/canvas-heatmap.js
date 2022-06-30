@@ -199,6 +199,7 @@ const processOptions = (div, data, userOptions) => {
     { name: "zUnit", default: false, verify: verifyString },
     { name: "xLog", default: false, verify: verifyBool },
     { name: "yLog", default: false, verify: verifyBool },
+    { name: "decimalPlaces", default: 3, verify: verifyNumber },
     { name: "tooltip", default: true, verify: verifyBool },
     { name: "levels", default: false, verify: verifyBool },
     { name: "title", default: false, verify: verifyString },
@@ -691,7 +692,7 @@ const addTooltip = (
         "<table><tbody>" +
         `<tr><td>x:</td><td>${xval} ${xu}</td></tr>` +
         `<tr><td>y:</td><td>${yval} ${yu}</td></tr>` +
-        `<tr><td>z:</td><td>${formatNumber(zval)} ${zu}</td></tr>` +
+        `<tr><td>z:</td><td>${formatNumber(zval, options.decimalPlaces)} ${zu}</td></tr>` +
         "</tbody></table>";
 
       tooltip
