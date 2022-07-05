@@ -1025,8 +1025,8 @@ const multiFormat = (date) => {
     formatSecond = timeFormat(":%S"),
     formatMinute = timeFormat("%H:%M"),
     formatHour = timeFormat("%H:%M"),
-    formatDay = timeFormat("%a %d"),
-    formatWeek = timeFormat("%b %d"),
+    formatDay = timeFormat("%d.%m"),
+    formatWeek = timeFormat("%d.%m"),
     formatMonth = timeFormat("%B"),
     formatYear = timeFormat("%Y");
   return (

@@ -1,6 +1,6 @@
 {
   "name": "canvas-heatmap",
-  "version": "1.3.5",
+  "version": "1.4.0",
   "description": "Interactive heatmap, capable of displaying 1,000,000+ data points using canvas and d3. ",
   "main": "src/index.js",
   "unpkg": "dist/canvas-heatmap.min.js",
