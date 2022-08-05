@@ -18,6 +18,7 @@ import {
   symbolTriangle,
   zoomIdentity,
   range,
+  format,
   zoom as d3zoom,
   timeFormatDefaultLocale,
 } from "d3";
@@ -39,6 +40,7 @@ import {
   formatNumber,
   isNumeric,
   languageOptions,
+  scientificNotation,
 } from "./functions";
 import { canvasGrid, canvasContour } from "./fillcanvas";
 
@@ -147,55 +149,6 @@ const heatmap = (div, data, options = {}) => {
   }
 };
 
-const prepareContours = (data, nullData, zDomain, options) => {
-  var thresholds = range(
-    zDomain[0],
-    zDomain[1],
-    (zDomain[1] - zDomain[0]) / options.thresholdStep
-  );
-  var step = (zDomain[1] - zDomain[0]) / options.thresholdStep;
-
-  var baseContour = [];
-  var mainContour = [];
-  var nanContour = [];
-
-  for (var i = 0; i < data.length; i++) {
-    let cr = contours()
-      .size([data[i].z[0].length, data[i].z.length])
-      .smooth(false);
-    let c = contours().size([data[i].z[0].length, data[i].z.length]);
-    let values = data[i].z.flat();
-    let nullValues = nullData[i].z.flat();
-    baseContour.push(cr.thresholds(thresholds)(values)[0]);
-    mainContour.push(c.thresholds(thresholds)(values));
-    nanContour.push(cr.thresholds([options.zMax * 1000])(nullValues)[0]);
-  }
-  return { baseContour, mainContour, nanContour, step };
-};
-
-const replaceNull = (data, zMax) => {
-  var nullData = JSON.parse(JSON.stringify(data));
-  for (var i = 0; i < data.length; i++) {
-    for (var y = 1; y < data[i].z.length - 1; y++) {
-      for (var x = 1; x < data[i].z[y].length - 1; x++) {
-        if (data[i].z[y][x] === null || !isNumeric(data[i].z[y][x])) {
-          if (data[i].z[y][x] !== null) data[i].z[y][x] = null;
-          nullData[i].z[y][x] = zMax * 10;
-          nullData[i].z[y][x + 1] = zMax * 10;
-          nullData[i].z[y - 1][x + 1] = zMax * 10;
-          nullData[i].z[y - 1][x] = zMax * 10;
-          nullData[i].z[y - 1][x - 1] = zMax * 10;
-          nullData[i].z[y][x - 1] = zMax * 10;
-          nullData[i].z[y + 1][x - 1] = zMax * 10;
-          nullData[i].z[y + 1][x] = zMax * 10;
-          nullData[i].z[y + 1][x + 1] = zMax * 10;
-        }
-      }
-    }
-  }
-  return nullData;
-};
-
 const processOptions = (div, data, userOptions) => {
   var defaultOptions = [
     { name: "language", default: "en", verify: verifyString },
@@ -277,10 +230,10 @@ const processOptions = (div, data, userOptions) => {
   }
 
   if (!("marginLeft" in userOptions))
-    options.marginLeft = options.fontSize * 3 + 10;
+    options.marginLeft = options.fontSize * 4 + 10;
   if (!("marginRight" in userOptions)) {
     if (options.legendRight) {
-      options.marginRight = options.fontSize * 5 + 10;
+      options.marginRight = options.fontSize * 5 + 12;
     } else {
       options.marginRight = 10;
     }
@@ -312,6 +265,55 @@ const processOptions = (div, data, userOptions) => {
     options.height - options.marginTop - options.marginBottom
   );
   return options;
+};
+
+const prepareContours = (data, nullData, zDomain, options) => {
+  var thresholds = range(
+    zDomain[0],
+    zDomain[1],
+    (zDomain[1] - zDomain[0]) / options.thresholdStep
+  );
+  var step = (zDomain[1] - zDomain[0]) / options.thresholdStep;
+
+  var baseContour = [];
+  var mainContour = [];
+  var nanContour = [];
+
+  for (var i = 0; i < data.length; i++) {
+    let cr = contours()
+      .size([data[i].z[0].length, data[i].z.length])
+      .smooth(false);
+    let c = contours().size([data[i].z[0].length, data[i].z.length]);
+    let values = data[i].z.flat();
+    let nullValues = nullData[i].z.flat();
+    baseContour.push(cr.thresholds(thresholds)(values)[0]);
+    mainContour.push(c.thresholds(thresholds)(values));
+    nanContour.push(cr.thresholds([options.zMax * 1000])(nullValues)[0]);
+  }
+  return { baseContour, mainContour, nanContour, step };
+};
+
+const replaceNull = (data, zMax) => {
+  var nullData = JSON.parse(JSON.stringify(data));
+  for (var i = 0; i < data.length; i++) {
+    for (var y = 1; y < data[i].z.length - 1; y++) {
+      for (var x = 1; x < data[i].z[y].length - 1; x++) {
+        if (data[i].z[y][x] === null || !isNumeric(data[i].z[y][x])) {
+          if (data[i].z[y][x] !== null) data[i].z[y][x] = null;
+          nullData[i].z[y][x] = zMax * 10;
+          nullData[i].z[y][x + 1] = zMax * 10;
+          nullData[i].z[y - 1][x + 1] = zMax * 10;
+          nullData[i].z[y - 1][x] = zMax * 10;
+          nullData[i].z[y - 1][x - 1] = zMax * 10;
+          nullData[i].z[y][x - 1] = zMax * 10;
+          nullData[i].z[y + 1][x - 1] = zMax * 10;
+          nullData[i].z[y + 1][x] = zMax * 10;
+          nullData[i].z[y + 1][x + 1] = zMax * 10;
+        }
+      }
+    }
+  }
+  return nullData;
 };
 
 const getDomain = (domain) => {
@@ -412,6 +414,8 @@ const addXAxis = (svg, xDomain, options) => {
   var axis = axisBottom(ax).ticks(5);
   if (options.xTime) {
     axis.tickFormat(multiFormat);
+  } else if (scientificNotation(xDomain[0], xDomain[1])) {
+    axis.tickFormat(format(".1e"));
   }
 
   var g = svg
@@ -474,6 +478,8 @@ const addYAxis = (svg, yDomain, options) => {
   var axis = axisLeft(ax).ticks(3);
   if (options.yTime) {
     axis.tickFormat(multiFormat);
+  } else if (scientificNotation(yDomain[0], yDomain[1])) {
+    axis.tickFormat(format(".1e"));
   }
 
   var g = svg
@@ -527,6 +533,7 @@ const addBackground = (div, options) => {
 };
 
 const addLegendRight = (svg, options) => {
+  console.log(options);
   var defs = svg.append("defs");
   var ndp = 100;
   if (options.zMax - options.zMin < 0.1) ndp = 1000;
@@ -536,6 +543,14 @@ const addLegendRight = (svg, options) => {
     t3 = Math.round(((t1 + t5) / 2) * ndp) / ndp,
     t2 = Math.round(((t1 + t3) / 2) * ndp) / ndp,
     t4 = Math.round(((t3 + t5) / 2) * ndp) / ndp;
+
+  if (scientificNotation(options.zMin, options.zMax)) {
+    t1 = t1.toExponential();
+    t2 = t2.toExponential();
+    t3 = t3.toExponential();
+    t4 = t4.toExponential();
+    t5 = t5.toExponential();
+  }
 
   var svgGradient = defs
     .append("linearGradient")

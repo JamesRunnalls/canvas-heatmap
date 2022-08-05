@@ -364,3 +364,7 @@ export const languageOptions = (name) => {
     return lang["en"];
   }
 };
+
+export const scientificNotation = (min, max) => {
+  return (min > -0.0001 && max < 0.0001) || (min < -10000 || max > 10000)
+};
