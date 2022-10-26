@@ -27,6 +27,7 @@ import {
   verifyString,
   verifyBool,
   verifyNumber,
+  verifyNone,
   verifyColors,
   verifyDiv,
   verifyData,
@@ -164,8 +165,8 @@ const processOptions = (div, data, userOptions) => {
     { name: "tooltip", default: true, verify: verifyBool },
     { name: "levels", default: false, verify: verifyBool },
     { name: "title", default: false, verify: verifyString },
-    { name: "zMin", default: false, verify: verifyNumber },
-    { name: "zMax", default: false, verify: verifyNumber },
+    { name: "zMin", default: false, verify: verifyNone },
+    { name: "zMax", default: false, verify: verifyNone },
     { name: "fontSize", default: 12, verify: verifyNumber },
     { name: "contour", default: false, verify: verifyBool },
     { name: "yReverse", default: false, verify: verifyBool },
@@ -247,6 +248,12 @@ const processOptions = (div, data, userOptions) => {
       options.marginTop = 10;
     }
   }
+
+  if (!(typeof options.zMin === "number" && !isNaN(options.zMin)))
+    options.zMin = false;
+
+  if (!(typeof options.zMax === "number" && !isNaN(options.zMax)))
+    options.zMax = false;
 
   options.xTime = false;
   options.yTime = false;
@@ -333,13 +340,13 @@ const dataExtents = (data) => {
     let xext = extent(data[h].x);
     let yext = extent(data[h].y);
     if (
-      !xFileDomain.map((x) => x[0]).includes(xext[0]) &&
+      !xFileDomain.map((x) => x[0]).includes(xext[0]) ||
       !xFileDomain.map((x) => x[1]).includes(xext[1])
     ) {
       xFileDomain.push(xext);
     }
     if (
-      !yFileDomain.map((y) => y[0]).includes(yext[0]) &&
+      !yFileDomain.map((y) => y[0]).includes(yext[0]) ||
       !yFileDomain.map((y) => y[1]).includes(yext[1])
     ) {
       yFileDomain.push(yext);
@@ -411,7 +418,7 @@ const addXAxis = (svg, xDomain, options) => {
   }
   var ref = ax.copy();
   var base = ax.copy();
-  var axis = axisBottom(ax).ticks(5);
+  var axis = axisBottom(ax).ticks(3);
   if (options.xTime) {
     axis.tickFormat(multiFormat);
   } else if (scientificNotation(xDomain[0], xDomain[1])) {
@@ -533,7 +540,6 @@ const addBackground = (div, options) => {
 };
 
 const addLegendRight = (svg, options) => {
-  console.log(options);
   var defs = svg.append("defs");
   var ndp = 100;
   if (options.zMax - options.zMin < 0.1) ndp = 1000;

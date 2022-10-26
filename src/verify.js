@@ -9,6 +9,10 @@ export const verifyNumber = (number) => {
   return typeof number === "number" && !isNaN(number);
 };
 
+export const verifyNone = (number) => {
+  return true;
+};
+
 export const verifyBool = (bool) => {
   return typeof bool === "boolean";
 };
