@@ -35,6 +35,7 @@ import {
 } from "./verify";
 import {
   convertToRGB,
+  convertToHex,
   getFileIndex,
   closest,
   formatDate,
@@ -260,9 +261,11 @@ const processOptions = (div, data, userOptions) => {
   if (data[0].x[0] instanceof Date) options.xTime = true;
   if (data[0].y[0] instanceof Date) options.yTime = true;
 
+  options.colors = JSON.parse(JSON.stringify(options.colors));
   options.colors = options.colors.map((c) => {
     if (Array.isArray(c.color)) {
-      c.rgba = c.color;
+      c.rgba = JSON.parse(JSON.stringify(c.color));
+      c.color = convertToHex(c.color);
     } else {
       c.rgba = convertToRGB(c.color);
     }

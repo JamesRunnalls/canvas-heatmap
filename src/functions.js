@@ -10,6 +10,18 @@ export const convertToRGB = (hex) => {
   return color;
 };
 
+export const convertToHex = (rgb) => {
+  return "#" + hex(rgb[0]) + hex(rgb[1]) + hex(rgb[2]);
+}
+
+const hex = (c) => {
+  var s = "0123456789abcdef";
+  var i = parseInt(c, 10);
+  if (i === 0 || isNaN(c)) return "00";
+  i = Math.round(Math.min(Math.max(0, i), 255));
+  return s.charAt((i - (i % 16)) / 16) + s.charAt(i % 16);
+}
+
 export const getRGBAColor = (value, min, max, colors) => {
   if (value === null || isNaN(value)) {
     return [255, 255, 255, 0];
