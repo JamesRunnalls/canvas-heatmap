@@ -261,7 +261,11 @@ const processOptions = (div, data, userOptions) => {
   if (data[0].y[0] instanceof Date) options.yTime = true;
 
   options.colors = options.colors.map((c) => {
-    c.rgba = convertToRGB(c.color);
+    if (Array.isArray(c.color)) {
+      c.rgba = c.color;
+    } else {
+      c.rgba = convertToRGB(c.color);
+    }
     return c;
   });
 
