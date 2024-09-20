@@ -82,7 +82,8 @@ Data can be an object {x: [], y:[], z:[[]]} or and array of objects [{},{}].
 | autoDownsample      | Downsample for contour plot                           | 500         | Number   |
 | setDownloadGraph    | Add png download to function                          | false       | Function |
 | setDownloadGraphDiv | Unique div ID to apply onclick event for png download | false       | String   |
-| hover               | Return the mouse values                               | false       | Function |
+| hover               | Return the mouse values on hover                      | false       | Function |
+| click               | Return the mouse values on click                      | false       | Function |
 | width               | Width of the graph                                    | div width   | Number   |
 | height              | Height of the graph                                   | div height  | Number   |
 | colors              | Color range for the plot (see below for example)      | Red -> Blue | Array    |

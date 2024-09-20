@@ -183,6 +183,7 @@ const processOptions = (div, data, userOptions) => {
     { name: "setDownloadGraph", default: false, verify: verifyFunction },
     { name: "setDownloadGraphDiv", default: false, verify: verifyString },
     { name: "hover", default: false, verify: verifyFunction },
+    { name: "click", default: false, verify: verifyFunction },
 
     {
       name: "colors",
@@ -786,6 +787,27 @@ const addTooltip = (
       tooltip.style("opacity", 0);
       select("#zpointer_" + div).style("opacity", 0);
       if (options.hover) options.hover({ mousex: false, mousey: false });
+    }
+  });
+
+  zoombox.on("click", (event) => {
+    try {
+      var hoverX = xAxis.ax.invert(
+        event.layerX - options.marginLeft || event.offsetX - options.marginLeft
+      );
+      var hoverY = yAxis.ax.invert(
+        event.layerY - options.marginTop || event.offsetY - options.marginTop
+      );
+      var idx = Math.max(
+        getFileIndex(xFileDomain, hoverX),
+        getFileIndex(yFileDomain, hoverY)
+      );
+      var process = data[idx];
+      var yi = closest(hoverY, process.y);
+      var xi = closest(hoverX, process.x);
+      if (options.click) options.click({ mousex: xi, mousey: yi, idx });
+    } catch (e) {
+      if (options.click) options.click({ mousex: false, mousey: false });
     }
   });
 

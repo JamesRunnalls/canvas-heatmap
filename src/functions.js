@@ -22,42 +22,46 @@ const hex = (c) => {
   return s.charAt((i - (i % 16)) / 16) + s.charAt(i % 16);
 }
 
+const colorCache = new Map();
+
 export const getRGBAColor = (value, min, max, colors) => {
-  if (value === null || isNaN(value)) {
-    return [255, 255, 255, 0];
+  if (value === null || isNaN(value)) return [255, 255, 255, 0];
+  if (value < min || value > max) return [0, 0, 0, 0];
+  const cacheKey = `${value}-${min}-${max}`;
+  if (colorCache.has(cacheKey)) {
+    return colorCache.get(cacheKey);
   }
-  if (value > max) {
-    return [0, 0, 0, 0];
-  }
-  if (value < min) {
-    return [0, 0, 0, 0];
-  }
-  var loc = (value - min) / (max - min);
+  const range = max - min;
+  const loc = (value - min) / range;
   if (loc < 0 || loc > 1) {
+    colorCache.set(cacheKey, [255, 255, 255, 0]);
     return [255, 255, 255, 0];
-  } else {
-    var index = 0;
-    for (var i = 0; i < colors.length - 1; i++) {
-      if (loc >= colors[i].point && loc <= colors[i + 1].point) {
-        index = i;
-        break;
-      }
-    }
-    var color1 = colors[index].rgba;
-    var color2 = colors[index + 1].rgba;
-
-    var f =
-      (loc - colors[index].point) /
-      (colors[index + 1].point - colors[index].point);
-    var rgb = [
-      color1[0] + (color2[0] - color1[0]) * f,
-      color1[1] + (color2[1] - color1[1]) * f,
-      color1[2] + (color2[2] - color1[2]) * f,
-      255,
-    ];
-
-    return rgb;
   }
+  let low = 0;
+  let high = colors.length - 1;
+  while (low < high) {
+    const mid = Math.floor((low + high) / 2);
+    if (loc < colors[mid].point) {
+      high = mid - 1;
+    } else if (loc > colors[mid + 1].point) {
+      low = mid + 1;
+    } else {
+      low = mid;
+      break;
+    }
+  }
+  const index = low;
+  const { rgba: color1 } = colors[index];
+  const { rgba: color2 } = colors[index + 1];
+  const factor = (loc - colors[index].point) / (colors[index + 1].point - colors[index].point);
+  const rgb = [
+    color1[0] + (color2[0] - color1[0]) * factor,
+    color1[1] + (color2[1] - color1[1]) * factor,
+    color1[2] + (color2[2] - color1[2]) * factor,
+    255
+  ];
+  colorCache.set(cacheKey, rgb);
+  return rgb;
 };
 
 export const closest = (num, arr) => {
