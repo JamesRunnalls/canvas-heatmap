@@ -25,7 +25,7 @@ const hex = (c) => {
 export const getRGBAColor = (value, min, max, colors, colorCache) => {
   if (value === null || isNaN(value)) return [255, 255, 255, 0];
   if (value < min || value > max) return [0, 0, 0, 0];
-  const cacheKey = `${value}-${min}-${max}`;
+  const cacheKey = `${value}`;
   if (colorCache.has(cacheKey)) {
     return colorCache.get(cacheKey);
   }

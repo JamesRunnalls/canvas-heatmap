@@ -76,7 +76,7 @@ const heatmap = (div, data, options = {}) => {
 
     if (options.addTitle) addTitle(svg, div, options);
     if (options.backgroundColor) addBackground(div, options);
-    if (options.legendRight) addLegendRight(svg, options);
+    if (options.legendRight) addLegendRight(svg, div, options);
     if (options.setDownloadGraph)
       options.setDownloadGraph(() => downloadGraph(div, options));
     if (options.setDownloadGraphDiv)
@@ -548,7 +548,7 @@ const addBackground = (div, options) => {
     .attr("fill", options.backgroundColor);
 };
 
-const addLegendRight = (svg, options) => {
+const addLegendRight = (svg, div, options) => {
   var defs = svg.append("defs");
   var ndp = 100;
   if (options.zMax - options.zMin < 0.1) ndp = 1000;
@@ -569,7 +569,7 @@ const addLegendRight = (svg, options) => {
 
   var svgGradient = defs
     .append("linearGradient")
-    .attr("id", "svgGradient")
+    .attr("id", "svgGradient_" + div)
     .attr("x1", "0")
     .attr("x2", "0")
     .attr("y1", "0")
@@ -591,7 +591,7 @@ const addLegendRight = (svg, options) => {
     .attr("height", options.canvasHeight)
     .attr("x", options.canvasWidth + options.marginRight / 6)
     .attr("y", 0)
-    .attr("fill", "url(#svgGradient)");
+    .attr("fill", `url(#svgGradient_${div})`);
 
   svg
     .append("text")
