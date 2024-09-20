@@ -41,7 +41,7 @@ export const canvasContour = (
   prepContours
 ) => {
   const colorScale = (v) => {
-    return getRGBAColor(v, options.zMin, options.zMax, options.colors);
+    return getRGBAColor(v, options.zMin, options.zMax, options.colors, options.colorCache);
   };
 
   for (var i = 0; i < data.length; i++) {
@@ -153,7 +153,7 @@ const putImgDataSingleMatrix = (
   options
 ) => {
   const colorScale = (v) => {
-    return getRGBAColor(v, options.zMin, options.zMax, options.colors);
+    return getRGBAColor(v, options.zMin, options.zMax, options.colors, options.colorCache);
   };
   var { indexxpix, indexypix } = pixelMapping(arr, scaleX, scaleY, options);
   var imgData = context.createImageData(
@@ -201,7 +201,7 @@ const putImgDataMultMatrix = (
   options
 ) => {
   const colorScale = (v) => {
-    return getRGBAColor(v, options.zMin, options.zMax, options.colors);
+    return getRGBAColor(v, options.zMin, options.zMax, options.colors, options.colorCache);
   };
   var imgData = context.createImageData(
     options.canvasWidth,

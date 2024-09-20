@@ -272,6 +272,7 @@ const processOptions = (div, data, userOptions) => {
     }
     return c;
   });
+  options.colorCache = new Map();
 
   options.canvasWidth = Math.floor(
     options.width - options.marginLeft - options.marginRight

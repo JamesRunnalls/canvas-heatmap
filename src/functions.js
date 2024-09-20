@@ -22,9 +22,7 @@ const hex = (c) => {
   return s.charAt((i - (i % 16)) / 16) + s.charAt(i % 16);
 }
 
-const colorCache = new Map();
-
-export const getRGBAColor = (value, min, max, colors) => {
+export const getRGBAColor = (value, min, max, colors, colorCache) => {
   if (value === null || isNaN(value)) return [255, 255, 255, 0];
   if (value < min || value > max) return [0, 0, 0, 0];
   const cacheKey = `${value}-${min}-${max}`;
